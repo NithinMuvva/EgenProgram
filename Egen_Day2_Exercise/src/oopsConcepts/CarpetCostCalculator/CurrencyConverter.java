@@ -22,7 +22,7 @@ public class CurrencyConverter {
 
 	// overloading method accepts 1 argument of type double
 	public double totalCurreny (double usd) {
-		return usd;
+		return usd*this.currencyMap.get(this.country);
 	}
 
 	// overloading method accepts 2 argument of type double
