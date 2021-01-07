@@ -1,0 +1,10 @@
+Category,Name,Price,Type
+Starters,Chicken Bites,5.99,Alacarte
+Starters,Fried Chicken,6.99,Alacarte
+Starters,Veg Bites,7.99,Alacarte
+Burgers,Chicken Texas Burger,8.99,Alacarte
+Burgers,Veg Texas Burger,9.99,Alacarte
+Burgers,Fish Texas Burger,10.99,Alacarte
+Combos,VegBurger-Coke-Fries,11.99,Combo
+Combos,ChickenBurger-Coke-Fries,12.99,Combo
+Combos,FishBurger-Coke-Fries,13.99,Combo

@@ -1,7 +1,11 @@
 package com.Egen.TexasBurger;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
+import com.Egen.TexasBurger.Menu.Menu;
+
 
 public class Restuarant implements TexasBurgerInterface{
 	
@@ -10,19 +14,25 @@ public class Restuarant implements TexasBurgerInterface{
 	private Integer phone;
 	private String Timings;
 	private Cart cart;
+	private List<Reservations> reservations;
 	
 	public Restuarant(Menu menu, Location location) {
 		this.menu = menu;
 		this.location = location;
+		this.reservations = new ArrayList<>();
 	}
 	
+	public void setReservations(List<Reservations> reservations) {
+		this.reservations = reservations;
+	}
+
 	public Restuarant() {
 		
 	}
 
 	public Menu getMenu() {
 		
-        for(Map.Entry<String, List<Item>> entry : menu.getCategory().entrySet()) {
+        for(Map.Entry<String, List<Item>> entry :this.menu.getCategory().entrySet()) {
             System.out.println(entry.getKey());
             System.out.println("-------------------------------");
             int index = 0;
@@ -87,6 +97,19 @@ public class Restuarant implements TexasBurgerInterface{
             System.out.println();
         }
 		return cart;
+	}
+	
+	@Override
+	public void addReservation(Reservations res) {
+		// TODO Auto-generated method stub
+		this.reservations.add(res);
+		
+	}
+
+	@Override
+	public List<Reservations> getReservations() {
+		// TODO Auto-generated method stub
+		return this.reservations;
 	}
 	
 }

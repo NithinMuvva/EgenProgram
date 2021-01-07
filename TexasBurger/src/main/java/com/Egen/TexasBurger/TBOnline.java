@@ -1,10 +1,17 @@
 package com.Egen.TexasBurger;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Scanner;
 
 import org.apache.log4j.Logger;
+
+import com.Egen.TexasBurger.Menu.Menu;
 
 public class TBOnline {
 
@@ -15,65 +22,47 @@ public class TBOnline {
 	
 	private  List<Location> locatList;
 	
+	private  List<Item> splList;
+	
+	
+	private DataReader dataReader;
+	
     private static Scanner sc = new Scanner(System.in);
 	
-	public  void intialize() {
-		
-		Location boston = new Location("123 street", "MA", "USA", 50303, 894982021, 12.3, 16.4);
-		Location chicago = new Location("345 street", "IL", "USA", 50303, 894982021, 15.3, 16.4);
-		Location newyork = new Location("456 street", "NY", "USA", 50303, 894982021, 18.3, 16.4);
-		
-		Menu menu = new Menu();
-		// Category - Sandwiches
-        List<Item> starterList = new ArrayList<>();
-        starterList.add(new Item("Chicken Bites", 5.99));
-        starterList.add(new Item("Fried Chicken", 6.99));
-        starterList.add(new Item("Veg Bites", 3.99));
-        menu.addCategory("Starters");
-        menu.getCategory().get("Starters").addAll(starterList);
-        
-        
-        List<Item> burgerList = new ArrayList<>();
-        burgerList.add(new Item("Chicken Texas Burger", 5.99));
-        burgerList.add(new Item(" Veg Texas Burger", 6.99));
-        burgerList.add(new Item("Fish Texas Burger", 7.99));
-        menu.addCategory("Burgers");
-        menu.getCategory().get("Burgers").addAll(starterList);
-
-        List<Item> comboList = new ArrayList<>();
-        comboList.add(new Item("VegBurger-Coke-Fries", 11.99,"Combo"));
-        comboList.add(new Item("ChickenBurger-Coke-Fries", 12.99,"Combo"));;
-        comboList.add(new Item("FishBurger-Coke-Fries", 13.99,"Combo"));
-        menu.addCategory("Combos");
-        menu.getCategory().get("Combos").addAll(starterList);
-        
-        List<Item> specialityList = new ArrayList<>();
-        specialityList.add(new Item("Fries", 7.99));
-        specialityList.add(new Item("Chef special", 11.99));
-        menu.addCategory("Specialities");
-        menu.getCategory().get("Specialities").addAll(starterList);
-        
-        Restuarant  chicRest = new Restuarant(menu, chicago);
-        chicago.setRestuarant(chicRest);
-        Restuarant  bosRest = new Restuarant(menu,  boston);
-        boston.setRestuarant(bosRest);
-        Restuarant  nyRest = new Restuarant(menu, newyork);
-        newyork.setRestuarant(nyRest);
-        
-        this.resList.add(chicRest);
-        this.resList.add(bosRest);
-        this.resList.add(nyRest);
-        this.locatList.add(boston);
-		this.locatList.add(chicago);
-		this.locatList.add(newyork);
-        
+	public  void intialize() throws FileNotFoundException, IOException, ParseException {
+        this.resList = dataReader.getResList();
+        this.locatList = dataReader.getLocationsList();
+        this.splList = dataReader.getSpecialList();
 	}
+	
+	public void addLocation() {
+		logger.info("Enter Street: ");
+		String street = sc.nextLine();
+		logger.info("Enter City: ");
+		String city = sc.nextLine();
+		logger.info("Enter State: ");
+		String country = sc.nextLine();
+		logger.info("Please provide your location's latitude: ");
+        Double currLatitude = Double.parseDouble(sc.nextLine());
+        logger.info("Please provide your location's longitude: ");
+        Double currLongitude = Double.parseDouble(sc.nextLine());
+        logger.info("Enter Phone: ");
+		Integer phone = sc.nextInt();
+		logger.info("Enter ZipCode: ");
+		String zipCode = sc.next();
+		String state = sc.nextLine();
+		logger.info("Enter Country: ");
+		
+        Location l = new Location(street, state, city, country, Integer.parseInt(zipCode), phone, currLatitude, currLongitude);
+		this.locatList.add(l);
+	}
+	
 	
 	public String searchClosestLocation() {
 
-        System.out.println("Please provide your current location's latitude: ");
+		logger.info("Please provide your current location's latitude: ");
         Double currLatitude = Double.parseDouble(sc.nextLine());
-        System.out.println("Please provide your current location's longitude: ");
+        logger.info("Please provide your current location's longitude: ");
         Double currLongitude = Double.parseDouble(sc.nextLine());
         Double shortestDistance = Double.MAX_VALUE;
         for(Location l : this.locatList) {
@@ -97,11 +86,13 @@ public class TBOnline {
 	
 	
 	
-	public TBOnline() {
+	public TBOnline() throws FileNotFoundException, IOException, ParseException {
 		// TODO Auto-generated constructor stub
 		this.locatList = new ArrayList<Location>();
 		this.resList = new ArrayList<>();
+		this.splList = new ArrayList<>();
 		this.nearRes = null;
+		this.dataReader = new DataReader();
 		
 	}
 
@@ -109,25 +100,83 @@ public class TBOnline {
 	public static void main(String[] args) {
 		
 		try {
-			
-			 System.out.println("Welcome to Texas Burger Online Delivery Platform");
-			 System.out.println("Please enter the location details below ");
-			
+
+			System.out.println("Welcome to Texas Burger Online Delivery Platform");
 			TBOnline tb = new TBOnline();
 			tb.intialize();
-			tb.searchClosestLocation();
-			if(tb.nearRes != null) {
-				tb.nearRes.getMenu();
-			}
-			System.out.println("Please enter to view the cart [y] [n]");
-			String input = sc.nextLine();
-			Item i = new Item("Fries", 7.99);
-			tb.nearRes.addToCart(i, 2);
-			if(input.toLowerCase().equals("y")) {
-				tb.nearRes.viewCart();
-			}
+			while (true) {
+				System.out.println("Please select from below options\n" + "1. Locations\n" + "2. Menu\n" + "3. Exit");
+				Integer choice = Integer.parseInt(sc.nextLine());
+				switch (choice) {
+				case 1:
+					System.out.println(
+							"Please select from below options\n" + "1. View Locations\n" + "2. Add Location\n");
+					Integer lchoice = Integer.parseInt(sc.nextLine());
+					if (lchoice == 1) {
+						System.out.println("-------------------------------");
+						int index = 0;
+						for (Location l : tb.locatList) {
+							index++;
+							logger.info(index + "----" + l);
+						}
+						System.out.println("-------------------------------");
+						System.out.println();
+					} else {
+						tb.addLocation();
+						logger.info("Location Sucessfylly Added");
+					}
+					break;
+				case 2:
+					System.out.println("Please enter the location details below ");
+					tb.searchClosestLocation();
+					if (tb.nearRes != null) {
+						tb.nearRes.getMenu();
+					}
+					
+					System.out.println(
+							"Please select from below options\n" + "1. View Reservations\n" + "2. Make Reservation\n");
+					Integer reschoice = Integer.parseInt(sc.nextLine());
+					if (reschoice == 1) {
+						System.out.println("-------------------------------");
+						int index = 0;
+						for (Reservations r : tb.nearRes.getReservations()) {
+							index++;
+							logger.info(index + "----" + r);
+						}
+						System.out.println("-------------------------------");
+						System.out.println();
+					} else {
+						System.out.println("Please Reservation details below ");
+						logger.info("Please provide customer name: ");
+						String cName = sc.nextLine();
+						logger.info("Please provide date of reservation: ");
+						Date date = new SimpleDateFormat("dd/MM/yyyy").parse(sc.nextLine());
+						Reservations r = new Reservations(cName, date);
+						tb.nearRes.addReservation(r);
+						logger.info("Reservation Sucessfylly Added");
+					}
+					break;
+					
+				case 4:
+					System.out.println("Exiting Application");
+					tb.dataReader.setCategoryMap(tb.resList.get(0).getMenu().getCategory());
+					tb.dataReader.setLocationsList(tb.locatList);
+					tb.dataReader.setResList(tb.resList);
+					tb.dataReader.setSpecialList(tb.splList);
+					tb.dataReader.DataWriter();
+					
+					Item i = new Item("Fries", 7.99);
+					tb.nearRes.addToCart(i, 2);
+					tb.nearRes.viewCart();
 
-			logger.info("Thank you");
+					logger.info("Thank you");
+					
+					System.exit(0);
+				default:
+					System.out.println("Please provide an option to continue");
+					break;
+				}
+			}
 		}
 		catch (Exception e) {
 			// TODO: handle exception
