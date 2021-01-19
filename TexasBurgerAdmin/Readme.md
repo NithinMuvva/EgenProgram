@@ -1,5 +1,8 @@
 Texas Burger Spring Boot Application 
 
+Added Swagger for better undersatding of API's: 
+  http://localhost:8080/v2/api-docs
+  http://localhost:8080/swagger-ui.html
 PreReq:
 
 Download the project and run as Spring Boot App
